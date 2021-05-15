@@ -1,20 +1,26 @@
-; A simple boot sector that prints "Hello" the the screen with BIOS interrupts
+; A simple boot sector that prints a string
 
-mov ah, 0x0e ; Set to tele-type mode
+[org 0x7c00] ; Offset our code
 
-; Write "Hello"
-mov al, 'H' ; Write H to al
-int 0x10 ; Call the screen interrupt
-mov al, 'e'
-int 0x10
-mov al, 'l'
-int 0x10
-int 0x10
-mov al, 'o'
-int 0x10
+; Print our strings
+mov bx, HELLO_MSG
+call print_string
 
-jmp $ ; infinite loop
+call print_nl
 
-; Padding and magic bootsect number
+mov bx, GOODBYE_MSG
+call print_string
+
+jmp $ ; Hang
+
+%include "print_string.asm"
+
+; Data
+HELLO_MSG:
+    db 'Hello, World',0
+GOODBYE_MSG:
+    db 'Goodbye',0
+
+; Padding and magic number
 times 510-($-$$) db 0
 dw 0xaa55
