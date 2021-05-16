@@ -2,40 +2,34 @@
 
 [org 0x7c00] ; Offset our code
 
-mov [BOOT_DRIVE], dl ; Store the boot drive
-
 ; Initialize the stack
-mov bp, 0x8000
+mov bp, 0x9000
 mov sp, bp
 
-; Load 5 sectors from the disk
-mov bx, 0x9000
-mov dh, 5
-mov dl, [BOOT_DRIVE]
-call disk_load
+mov bx, MSG_REAL_MODE
+call print_string
 
-mov dx, [0x9000] ; Print the first loaded word
-call print_hex
+call switch_to_pm ; Note we never return from here
 
-call print_nl
-
-mov dx, [0x9000 + 512] ; Print the first word from the second loaded sector
-call print_hex
-
-jmp $ ; Hang
+jmp $ ; Hang if we somehow do
 
 %include "print_string.asm"
-%include "print_hex.asm"
-%include "disk_load.asm"
+%include "gdt.asm"
+%include "print_string_pm.asm"
+%include "switch_to_pm.asm"
 
-; Data
-BOOT_DRIVE:
-    db 0
+[bits 32]
+; Where we arrive after switching to protected mode
+BEGIN_PM:
+    mov ebx, MSG_PROT_MODE
+    call print_string_pm
 
-; Padding and magic number
+    jmp $ ; hang
+
+; Global variables
+MSG_REAL_MODE db "Started in 16-bit real mode",0
+MSG_PROT_MODE db "Sucessfully switched to 32-bit protected mode",0
+
+; Bootsector padding
 times 510-($-$$) db 0
 dw 0xaa55
-
-; Add some dummy data beyond the boot sector
-times 256 dw 0xdada
-times 256 dw 0xface
