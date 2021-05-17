@@ -9,7 +9,7 @@ all: os-image
 
 # Run qemu with our OS
 run: all
-	qemu-system-x86_64 -fda os-image
+	qemu-system-i386 -hda os-image
 
 # The disk image created by combining the bootsector and kernel
 os-image: boot/boot_sect.bin kernel.bin
@@ -33,7 +33,7 @@ kernel.bin: kernel/kernel_entry.o ${OBJ}
 
 # Disassemble our kernel - might be useful for debugging .
 kernel.dis : kernel.bin
-	ndisasm -b 32 $ < > $@
+	ndisasm -b 32 $< > $@
 
 clean:
 	rm -rf *.bin *.dis *.o os-image
