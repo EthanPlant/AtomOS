@@ -1,6 +1,6 @@
 # Automatically generate lists of sources
-C_SOURCES = $(wildcard kernel/*.c)
-HEADERS = $(wildcard kernel/*.h)
+C_SOURCES = $(wildcard kernel/*.c kernel/arch/i386/*.c)
+HEADERS = $(wildcard kernel/*.h kernel/arch/i386/*.h)
 
 OBJ = ${C_SOURCES:.c=.o}
 
