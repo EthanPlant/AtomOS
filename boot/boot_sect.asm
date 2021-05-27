@@ -13,6 +13,8 @@ mov sp, bp
 mov bx, MSG_REAL_MODE
 call print_string
 
+call print_nl
+
 ; Load the kernel
 call load_kernel
 

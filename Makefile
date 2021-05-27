@@ -4,12 +4,18 @@ HEADERS = $(wildcard kernel/*.h)
 
 OBJ = ${C_SOURCES:.c=.o}
 
+# Cross-compiler location
+CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
+LD = /usr/local/i386elfgcc/bin/i386-elf-ld
+
+CFLAGS = -g -ffreestanding -Wall -Wextra -fno-exceptions
+
 # Default build target
 all: os-image
 
 # Run qemu with our OS
 run: all
-	qemu-system-i386 -hda os-image
+	qemu-system-i386 -fda os-image
 
 # The disk image created by combining the bootsector and kernel
 os-image: boot/boot_sect.bin kernel.bin
@@ -17,11 +23,11 @@ os-image: boot/boot_sect.bin kernel.bin
 
 # Build the kernel binary
 kernel.bin: kernel/kernel_entry.o ${OBJ}
-	ld -o $@ -Ttext 0x1000 -m elf_i386 $^ --oformat binary
+	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
 
 # Generic rule for compiling C code
 %.o: %.c ${HEADERS}
-	gcc -ffreestanding -m32 -fno-pie -c $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
 
 # Assemble kernel_entry
 %.o: %.asm
