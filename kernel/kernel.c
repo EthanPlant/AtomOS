@@ -1,17 +1,11 @@
-#include "arch/i386/ports.h"
+#include "drivers/video/vga.h"
 
 void kernel_main()
 {
-    port_byte_out(0x3D4, 14); // Request high byte of cursor pos
-    int pos = port_byte_in(0x3D5) << 8;
-    port_byte_out(0x3D4, 15); // Request low byte of cursor pos
-    pos |= port_byte_in(0x3D5);
-
-    // VGA cells consist of 2 bytes
-    int offset_from_vga = pos * 2;
-
-    // Write a character to the cursor position
-    char *vga = 0xB8000;
-    vga[offset_from_vga] = 'X'; // Write the character
-    vga[offset_from_vga + 1] = 0x0F; // White on black
+    clear_screen();
+    kprint_at("X", 1, 6);
+    kprint_at("This text spans multiple lines", 75, 10);
+    kprint_at("There is a line\nbreak", 0, 20);
+    kprint("There is a line\nbreak");
+    kprint_at("What happens when we run out of space?", 45, 24);
 }
