@@ -1,5 +1,7 @@
-SYSTEM_HEADER_PROJECTS="libc kernel"
-PROJECTS="libc kernel"
+# shellcheck shell=bash
+
+export SYSTEM_HEADER_PROJECTS="libc kernel"
+export PROJECTS="libc kernel"
 
 export MAKE=${MAKE:-make}
 export HOST=${HOST:-$(./default-host.sh)}
