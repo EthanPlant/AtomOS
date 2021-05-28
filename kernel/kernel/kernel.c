@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <kernel/arch.h>
 #include <kernel/tty.h>
 
 void kernel_main(void)
 {
     terminal_initialize();
+    arch_init();
     printf("Welcome to\n");
     printf("         _                   ____   _____ \n");
     printf("    /\\  | |                 / __ \\ / ____|\n");
