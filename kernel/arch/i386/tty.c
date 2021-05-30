@@ -78,6 +78,11 @@ void terminal_writestring(const char *data)
 
 void terminal_setlocation(size_t x, size_t y)
 {
-    terminal_row = x;
-    terminal_col = y;
+    terminal_col = x;
+    terminal_row = y;
+}
+
+int terminal_getrow(void)
+{
+    return terminal_row;
 }

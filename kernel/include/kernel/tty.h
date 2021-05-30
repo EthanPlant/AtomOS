@@ -11,4 +11,6 @@ void terminal_writestring(const char* data);
 void terminal_setcolor(uint8_t color);
 void terminal_setlocation(size_t x, size_t y);
 
+int terminal_getrow(void);
+
 #endif
