@@ -75,3 +75,9 @@ void terminal_writestring(const char *data)
 {
     terminal_write(data, strlen(data));
 }
+
+void terminal_setlocation(size_t x, size_t y)
+{
+    terminal_row = x;
+    terminal_col = y;
+}
