@@ -1,5 +1,5 @@
-#ifndef GDT_H
-#define GDT_H
+#ifndef ARCH_I386_GDT_H
+#define ARCH_I386_GDT_H
 
 #include <stdint.h>
 
