@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "include/gdt.h"
+#include <gdt.h>
 
 // Defined in assembly
 extern void gdt_flush(uint32_t);

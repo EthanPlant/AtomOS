@@ -2,9 +2,9 @@
 
 #include <kernel/arch.h>
 
-#include "include/gdt.h"
-#include "include/idt.h"
-#include "include/vga.h"
+#include <gdt.h>
+#include <idt.h>
+#include <vga.h>
 
 extern void int_test();
 
