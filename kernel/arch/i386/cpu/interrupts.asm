@@ -85,9 +85,3 @@ isr_common_stub:
     popa
     add esp, 8 ; Clean up the pushes made to the stack
     iret
-
-global int_test
-int_test:
-    int 0x03
-    int 0x04
-    ret
