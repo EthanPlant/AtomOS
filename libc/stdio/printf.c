@@ -33,11 +33,15 @@ int printf(const char* restrict format, ...)
             while (format[amount] && format[amount] != '%')
                 amount++;
             if (maxrem < amount)
+            {
+                va_end(parameters);
                 return -1;
-            
+            }
             if (!print(format, amount))
+            {
+                va_end(parameters);
                 return -1;
-
+            }
             format += amount;
             written += amount;
             continue;
@@ -50,9 +54,15 @@ int printf(const char* restrict format, ...)
             format++;
             char c = (char) va_arg(parameters, int);
             if (!maxrem)
+            {
+                va_end(parameters);
                 return -1;
+            }
             if (!print(&c, sizeof(c)))
+            {
+                va_end(parameters);
                 return -1;
+            }
             written++;
         } 
         else if (*format == 's')
@@ -61,9 +71,15 @@ int printf(const char* restrict format, ...)
             const char *str = va_arg(parameters, const char*);
             size_t len = strlen(str);
             if (maxrem < len)
+            {
+                va_end(parameters);
                 return -1;
+            }
             if (!print(format, len))
+            {
+                va_end(parameters);
                 return -1;
+            }
             written += len;
             format += len;
         }
