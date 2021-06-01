@@ -10,17 +10,17 @@ uint8_t inb(uint16_t port)
 
 void outb(uint16_t port, uint8_t data)
 {
-    asm("out %%al, %%dx" : : "a"(data), "d"(port));
+    asm volatile("out %%al, %%dx" : : "a"(data), "d"(port));
 }
 
 uint16_t inw(uint16_t port)
 {
     uint16_t result;
-    asm volatile("inw %1, %0" : "=a"(result) : "dN"(port));
+    asm ("in %%dx, %%ax" : "=a"(result) : "dN"(port));
     return result;
 }
 
 void outw(uint16_t port, uint16_t data)
 {
-    asm volatile("outw %1 %0" : : "dN"(port), "a"(data));
+    asm volatile("outw %%ax, %%dx" : : "a"(data), "d"(port));
 }

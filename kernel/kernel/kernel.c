@@ -4,10 +4,13 @@
 
 #include <kernel/arch.h>
 #include <kernel/tty.h>
+#include <drivers/video/vga.h>
+
+#define VERSION_STR "May 31, 2021 Build\n"
 
 void kernel_main(void)
 {
-    char* version_string = "June 1, 2021 Build\n";
+    init_vga();
     terminal_initialize();
     arch_init();
     printf("Welcome to\n");
@@ -17,6 +20,6 @@ void kernel_main(void)
     printf("  / /\\ \\| __/ _ \\| '_ ` _ \\| |  | |\\___ \\ \n");
     printf(" / ____ \\ || (_) | | | | | | |__| |____) |\n");
     printf("/_/    \\_\\__\\___/|_| |_| |_|\\____/|_____/ \n");
-    terminal_setlocation(80 - strlen(version_string) - 1, terminal_getrow());
-    terminal_writestring(version_string);
+    terminal_setpos(43 - strlen(VERSION_STR), terminal_get_y());
+    printf(VERSION_STR);
 }
