@@ -9,27 +9,27 @@
 int arch_init(void)
 {
     terminal_setcolor(VGA_COLOR_RED, VGA_COLOR_BLACK);
-    printf("Initializing AtomOS \n");
+    terminal_writestring("Initializing AtomOS \n");
 
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    printf("Initializing GDT... ");
+    terminal_writestring("Initializing GDT... ");
     init_gdt();
     terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    printf("done\n");
+    terminal_writestring("done\n");
 
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    printf("Initializing IDT... ");
+    terminal_writestring("Initializing IDT... ");
     init_idt();
     terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    printf("done\n");
+    terminal_writestring("done\n");
 
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    printf("Installing ISRs... ");
+    terminal_writestring("Installing ISRs... ");
     isr_install();
     terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    printf("done\n");
+    terminal_writestring("done\n");
 
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    printf("All initialization complete!\n");
+    terminal_writestring("All initialization complete!\n");
     return 0;
 }

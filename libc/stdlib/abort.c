@@ -6,10 +6,10 @@ void abort(void)
 {
     #ifdef __is_libk
         // TODO: Add proper kernel panic
-        printf("Kernel Panic: abort() called\n");
+        terminal_writestring("Kernel Panic: abort() called\n");
     #else
         // TODO: Properly implement abort()
-        printf("abort()\n");
+        terminal_writestring("abort()\n");
     #endif
         while(1) {}
         __builtin_unreachable();

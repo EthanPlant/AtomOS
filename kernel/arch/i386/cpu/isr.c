@@ -84,15 +84,15 @@ void isr_install(void)
 void isr_handler(registers_t *regs)
 {
     char* str;
-    printf("Recieved interrupt: ");
+    terminal_writestring("Recieved interrupt: ");
     hex_to_ascii(regs->int_no, str);
-    printf(str);
-    printf("\nError message: ");
-    printf(exception_messages[regs->int_no]);
-    printf("\nError Code: ");
+    terminal_writestring(str);
+    terminal_writestring("\nError message: ");
+    terminal_writestring(exception_messages[regs->int_no]);
+    terminal_writestring("\nError Code: ");
     hex_to_ascii(regs->err_code, str);
-    printf(str);
-    printf("\n");
+    terminal_writestring(str);
+    terminal_writestring("\n");
 }
 
 // Helper function because we can't print numbers rn
