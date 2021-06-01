@@ -5,7 +5,6 @@
 
 extern void idt_flush(uint32_t);
 
-
 idt_entry_t idt_entries[IDT_ENTRIES];
 idt_ptr_t idt_ptr;
 

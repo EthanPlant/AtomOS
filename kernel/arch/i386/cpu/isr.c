@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <kernel/utils.h>
+#include <drivers/ports.h>
+
+isr_t interrupt_handlers[256];
 
 char *exception_messages[] = {
     "Division By Zero",
@@ -79,7 +82,35 @@ void isr_install(void)
     set_idt_gate(30, (uint32_t)isr30);
     set_idt_gate(31, (uint32_t)isr31);
 
-    // TODO IRQ stuff
+    // Remap the PIC
+    outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4); // Init master PIC
+    outb(PIC2_COMMAND, ICW1_INIT | ICW1_ICW4); // Init slave PIC
+    outb(PIC1_DATA, 0x20); // Master PIC offset
+    outb(PIC2_DATA, 0x28); // Slave PIC offset
+    outb(PIC1_DATA, 0x04); // Tell master PIC there's a slave at IRQ2
+    outb(PIC2_DATA, 0x02); // Tell slave PIC its ID
+    outb(PIC1_DATA, ICW4_8086);
+    outb(PIC1_DATA, ICW4_8086);
+    outb(PIC1_DATA, 0x00);
+    outb(PIC2_DATA, 0x00);
+
+    set_idt_gate(IRQ0, (uint32_t)irq0);
+    set_idt_gate(IRQ1, (uint32_t)irq1);
+    set_idt_gate(IRQ2, (uint32_t)irq2);
+    set_idt_gate(IRQ3, (uint32_t)irq3);
+    set_idt_gate(IRQ4, (uint32_t)irq4);
+    set_idt_gate(IRQ5, (uint32_t)irq5);
+    set_idt_gate(IRQ6, (uint32_t)irq6);
+    set_idt_gate(IRQ7, (uint32_t)irq7);
+    set_idt_gate(IRQ8, (uint32_t)irq8);
+    set_idt_gate(IRQ9, (uint32_t)irq9);
+    set_idt_gate(IRQ10, (uint32_t)irq10);
+    set_idt_gate(IRQ11, (uint32_t)irq11);
+    set_idt_gate(IRQ12, (uint32_t)irq12);
+    set_idt_gate(IRQ13, (uint32_t)irq13);
+    set_idt_gate(IRQ14, (uint32_t)irq14);
+    set_idt_gate(IRQ15, (uint32_t)irq15);
+    
 }
 
 void isr_handler(registers_t *regs)
@@ -95,4 +126,23 @@ void isr_handler(registers_t *regs)
     hex_to_ascii(regs->err_code, 2, int_err_code_str);
     terminal_writestring(int_err_code_str);
     terminal_newline();
+}
+
+void irq_handler(registers_t *regs)
+{
+    // Need to send an EOI to the PICS
+    if (regs->int_no >= 40) outb(PIC2_COMMAND, 0x20); // Slave
+    outb(PIC1_COMMAND, 0x20); // Master
+
+    // Handle interrupt
+    if (interrupt_handlers[regs->int_no] != 0)
+    {
+        isr_t handler = interrupt_handlers[regs->int_no];
+        handler(regs);
+    }
+}
+
+void register_interrupt_handler(uint8_t n, isr_t handler)
+{
+    interrupt_handlers[n] = handler;
 }

@@ -20,6 +20,13 @@ idt_flush:
         jmp isr_common_stub
 %endmacro
 
+%macro IRQ 2
+    [global irq%1]
+    irq%1:
+        push %2
+        jmp irq_common_stub
+%endmacro
+
 ISR_NOERRCODE 0
 ISR_NOERRCODE 1
 ISR_NOERRCODE 2
@@ -53,7 +60,26 @@ ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
 
+IRQ 0, 32
+IRQ 1, 33
+IRQ 2, 34
+IRQ 3, 35
+IRQ 4, 36
+IRQ 5, 37
+IRQ 6, 38
+IRQ 7, 39
+IRQ 8, 40
+IRQ 9, 41
+IRQ 10, 42
+IRQ 11, 42
+IRQ 12, 44
+IRQ 13, 45
+IRQ 14, 46
+IRQ 15, 47
+
+
 [extern isr_handler]
+[extern irq_handler]
 
 isr_common_stub:
     pusha
@@ -81,6 +107,39 @@ isr_common_stub:
     mov es, ax
     mov fs, ax
     mov gs, ax
+
+    popa
+    add esp, 8 ; Clean up the pushes made to the stack
+    iret
+
+irq_common_stub:
+    pusha
+
+    ; Save data segment
+    mov ax, ds
+    push eax
+    
+     ; Load kernel data segment
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    push esp ; registers_t *regs
+
+    cld
+
+    call irq_handler
+
+    pop ebx
+
+    ; Reload data segment
+    pop ebx
+    mov ds, bx
+    mov es, bx
+    mov fs, bx
+    mov gs, bx
 
     popa
     add esp, 8 ; Clean up the pushes made to the stack
