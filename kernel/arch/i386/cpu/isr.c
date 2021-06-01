@@ -2,6 +2,7 @@
 #include <idt.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <kernel/utils.h>
 
 char *exception_messages[] = {
     "Division By Zero",
@@ -83,33 +84,15 @@ void isr_install(void)
 
 void isr_handler(registers_t *regs)
 {
-    char* str;
+    char *int_no_str = "";
+    char *int_err_code_str = "";
     terminal_writestring("Recieved interrupt: ");
-    hex_to_ascii(regs->int_no, str);
-    terminal_writestring(str);
+    hex_to_ascii(regs->int_no, 2, int_no_str);
+    terminal_writestring(int_no_str);
     terminal_writestring("\nError message: ");
     terminal_writestring(exception_messages[regs->int_no]);
     terminal_writestring("\nError Code: ");
-    hex_to_ascii(regs->err_code, str);
-    terminal_writestring(str);
-    terminal_writestring("\n");
-}
-
-// Helper function because we can't print numbers rn
-void hex_to_ascii(int32_t n, char *str)
-{
-    int32_t tmp;
-    int index = 2;
-    str[0] = '0';
-    str[1] = 'x';
-    for (int i = 28; i > 0; i -= 4)
-    {
-        tmp = (n >> i) & 0xF;
-        if (tmp > 0xA) str[index++] = tmp - 0xA + 'a';
-        else str[index++] = tmp + '0';
-    } 
-    tmp = n & 0xF;
-    if (tmp > 0xA) str[index++] = tmp - 0xA + 'a';
-    else str[index++] = tmp + '0';
-    str[index] = 0; // Null terminate the string
+    hex_to_ascii(regs->err_code, 2, int_err_code_str);
+    terminal_writestring(int_err_code_str);
+    terminal_newline();
 }

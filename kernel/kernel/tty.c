@@ -83,6 +83,12 @@ void terminal_writestring(const char *str)
     terminal_write(str, strlen(str));
 }
 
+// Newline shortcut
+void terminal_newline(void)
+{
+    terminal_putchar('\n');
+}
+
 // Set the terminal color
 void terminal_setcolor(enum vga_color fg, enum vga_color bg)
 {
