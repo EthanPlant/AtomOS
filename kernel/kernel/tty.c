@@ -20,6 +20,8 @@ void terminal_initialize(void)
 void terminal_clear(void)
 {
     vga_clearscreen();
+    tty_dev.col = 0;
+    tty_dev.row = 0;
 }
 
 // Write a character at the current position

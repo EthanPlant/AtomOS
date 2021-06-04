@@ -23,5 +23,7 @@ void kernel_main(void)
     terminal_setpos(44 - strlen(VERSION_STR), terminal_get_y());
     terminal_writestring(VERSION_STR);
 
+    //panic(__FILE__, "Test panic", __LINE__);
+
     while (1); // Need this here so we don't stop running
 }

@@ -32,3 +32,8 @@ void init_timer(uint32_t freq)
     outb(0x40, l);
     outb(0x40, h);
 }
+
+uint32_t get_ticks(void)
+{
+    return tick;
+}
