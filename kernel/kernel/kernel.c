@@ -6,7 +6,7 @@
 #include <kernel/tty.h>
 #include <drivers/video/vga.h>
 
-#define VERSION_STR "May 31, 2021 Build\n"
+#define VERSION_STR "June 2, 2021 Build\n"
 
 void kernel_main(void)
 {
