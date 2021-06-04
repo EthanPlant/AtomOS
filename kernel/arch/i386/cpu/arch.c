@@ -5,6 +5,7 @@
 #include <isr.h>
 #include <drivers/video/vga.h>
 #include <stdio.h>
+#include <kernel/timer.h>
 
 int arch_init(void)
 {
@@ -30,6 +31,13 @@ int arch_init(void)
     terminal_writestring("done\n");
 
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+    terminal_writestring("Initializing timer... ");
+    init_timer((uint32_t)TIMER_FREQ);
+    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    terminal_writestring("done\n");
+
+    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
     terminal_writestring("All initialization complete!\n");
+
     return 0;
 }

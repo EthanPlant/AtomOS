@@ -23,6 +23,7 @@ idt_flush:
 %macro IRQ 2
     [global irq%1]
     irq%1:
+        push byte 0
         push %2
         jmp irq_common_stub
 %endmacro
@@ -118,8 +119,8 @@ irq_common_stub:
     ; Save data segment
     mov ax, ds
     push eax
-    
-     ; Load kernel data segment
+
+    ; Load kernel data segment
     mov ax, 0x10
     mov ds, ax
     mov es, ax
@@ -127,8 +128,6 @@ irq_common_stub:
     mov gs, ax
 
     push esp ; registers_t *regs
-
-    cld
 
     call irq_handler
 

@@ -110,7 +110,8 @@ void isr_install(void)
     set_idt_gate(IRQ13, (uint32_t)irq13);
     set_idt_gate(IRQ14, (uint32_t)irq14);
     set_idt_gate(IRQ15, (uint32_t)irq15);
-    
+
+    asm volatile("sti");
 }
 
 void isr_handler(registers_t *regs)
@@ -118,12 +119,12 @@ void isr_handler(registers_t *regs)
     char *int_no_str = "";
     char *int_err_code_str = "";
     terminal_writestring("Recieved interrupt: ");
-    hex_to_ascii(regs->int_no, 2, int_no_str);
+    itoa(regs->int_no, int_no_str, 16);
     terminal_writestring(int_no_str);
     terminal_writestring("\nError message: ");
     terminal_writestring(exception_messages[regs->int_no]);
     terminal_writestring("\nError Code: ");
-    hex_to_ascii(regs->err_code, 2, int_err_code_str);
+    itoa(regs->err_code, int_err_code_str, 2);
     terminal_writestring(int_err_code_str);
     terminal_newline();
 }
@@ -140,6 +141,7 @@ void irq_handler(registers_t *regs)
         isr_t handler = interrupt_handlers[regs->int_no];
         handler(regs);
     }
+
 }
 
 void register_interrupt_handler(uint8_t n, isr_t handler)

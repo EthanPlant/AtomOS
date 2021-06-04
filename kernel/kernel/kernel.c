@@ -22,4 +22,6 @@ void kernel_main(void)
     terminal_writestring("/_/    \\_\\__\\___/|_| |_| |_|\\____/|_____/ \n");
     terminal_setpos(44 - strlen(VERSION_STR), terminal_get_y());
     terminal_writestring(VERSION_STR);
+
+    while (1); // Need this here so we don't stop running
 }
