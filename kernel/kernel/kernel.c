@@ -6,7 +6,7 @@
 #include <kernel/tty.h>
 #include <drivers/video/vga.h>
 
-#define VERSION_STR "June 2, 2021 Build\n"
+#define VERSION_STR "June 4, 2021 Build\n"
 
 void kernel_main(void)
 {
@@ -22,8 +22,6 @@ void kernel_main(void)
     terminal_writestring("/_/    \\_\\__\\___/|_| |_| |_|\\____/|_____/ \n");
     terminal_setpos(44 - strlen(VERSION_STR), terminal_get_y());
     terminal_writestring(VERSION_STR);
-
-    //panic(__FILE__, "Test panic", __LINE__);
 
     while (1); // Need this here so we don't stop running
 }

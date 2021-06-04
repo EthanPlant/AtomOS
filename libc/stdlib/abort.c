@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <kernel/utils.h>
+
 __attribute__((__noreturn__))
 void abort(void)
 {
     #ifdef __is_libk
-        // TODO: Add proper kernel panic
-        terminal_writestring("Kernel Panic: abort() called\n");
+        panic(__FILE__, "KERNEL ERROR: abort() called from kernel", __LINE__);
     #else
         // TODO: Properly implement abort()
         terminal_writestring("abort()\n");
