@@ -45,6 +45,22 @@ char *exception_messages[] = {
     "Reserved"
 };
 
+// Fault handlers
+void doublefault_handler(registers_t *regs)
+{
+    panic(__FILE__, "CPU ERROR: Double Fault detected!", __LINE__);
+}
+
+void gpfault_handler(registers_t *regs)
+{
+    panic(__FILE__, "CPU ERROR: General Protection Fault detected!", __LINE__);
+}
+
+
+void pagefault_handler(registers_t *regs)
+{
+    panic(__FILE__, "CPU ERROR: Page Fault detected!", __LINE__);
+}
 
 void isr_install(void)
 {
@@ -82,6 +98,10 @@ void isr_install(void)
     set_idt_gate(30, (uint32_t)isr30);
     set_idt_gate(31, (uint32_t)isr31);
 
+    register_interrupt_handler(0x08, doublefault_handler);
+    register_interrupt_handler(0x0D, gpfault_handler);
+    register_interrupt_handler(0x0E, pagefault_handler);
+
     // Remap the PIC
     outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4); // Init master PIC
     outb(PIC2_COMMAND, ICW1_INIT | ICW1_ICW4); // Init slave PIC
@@ -116,6 +136,13 @@ void isr_install(void)
 
 void isr_handler(registers_t *regs)
 {
+    // Handle interrupt
+    if (interrupt_handlers[regs->int_no] != 0)
+    {
+        isr_t handler = interrupt_handlers[regs->int_no];
+        handler(regs);
+    }
+
     char *int_no_str = "";
     char *int_err_code_str = "";
     terminal_writestring("Recieved interrupt: ");
