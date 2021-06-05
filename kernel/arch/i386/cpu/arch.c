@@ -63,7 +63,7 @@ void print_registers(void)
     asm volatile("movl %%gs, %%eax" : "=a" (gs) : );
     asm volatile("movl %%ebx, %%eax": "=a" (ebx) : );
     asm volatile("movl %%ecx, %%eax": "=a" (ecx) : );
-    asm volatile("movl %%ecx, %%eax": "=a" (edx) : );
+    asm volatile("movl %%edx, %%eax": "=a" (edx) : );
     asm volatile("movl %%esi, %%eax": "=a" (esi) : );
     asm volatile("movl %%edi, %%eax": "=a" (edi) : );
     asm volatile("movl %%esp, %%eax": "=a" (esp) : );
