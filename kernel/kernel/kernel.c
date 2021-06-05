@@ -5,6 +5,7 @@
 #include <kernel/arch.h>
 #include <kernel/tty.h>
 #include <drivers/video/vga.h>
+#include <drivers/keyboard.h>
 
 #define VERSION_STR "June 4, 2021 Build\n"
 
@@ -12,7 +13,12 @@ void kernel_main(void)
 {
     init_vga();
     terminal_initialize();
+    terminal_setcolor(VGA_COLOR_RED, VGA_COLOR_BLACK);
+    terminal_writestring("Initializing AtomOS \n");
     arch_init();
+    init_keyboard();
+    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+    terminal_writestring("All initialization complete!\n");
     terminal_writestring("Welcome to\n");
     terminal_writestring("         _                   ____   _____ \n");
     terminal_writestring("    /\\  | |                 / __ \\ / ____|\n");

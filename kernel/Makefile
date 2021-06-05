@@ -33,6 +33,7 @@ kernel/kernel.o \
 kernel/tty.o \
 kernel/utils.o \
 drivers/video/vga.o \
+drivers/keyboard.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \

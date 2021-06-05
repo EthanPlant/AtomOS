@@ -11,9 +11,6 @@
 
 int arch_init(void)
 {
-    terminal_setcolor(VGA_COLOR_RED, VGA_COLOR_BLACK);
-    terminal_writestring("Initializing AtomOS \n");
-
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
     terminal_writestring("Initializing GDT... ");
     init_gdt();
@@ -37,9 +34,6 @@ int arch_init(void)
     init_timer(TIMER_FREQ);
     terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
     terminal_writestring("done\n");
-
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_writestring("All initialization complete!\n");
 
     return 0;
 }
