@@ -1,10 +1,11 @@
-#include <drivers/keyboard.h>
-#include <isr.h>
-#include <kernel/tty.h>
+#include <stdbool.h>
 #include <stdint.h>
+
+#include <cpu/isr.h>
+#include <drivers/keyboard.h>
 #include <drivers/ports.h>
 #include <drivers/video/vga.h>
-#include <stdbool.h>
+#include <kernel/tty.h>
 
 const char ascii_table[] = 
 {
@@ -36,7 +37,6 @@ char translate(uint8_t scancode, bool uppercase)
 
 static void keyboard_callback(registers_t *regs)
 {
-    //terminal_writestring("Keyboard Event\n");
     uint8_t scancode = inb(0x60);
     switch (scancode)
     {
@@ -68,8 +68,9 @@ void init_keyboard(void)
 {
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
     terminal_writestring("Initializing keyboard... ");
+
     register_interrupt_handler(IRQ1, keyboard_callback);
+
     terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
     terminal_writestring("done\n");
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 }

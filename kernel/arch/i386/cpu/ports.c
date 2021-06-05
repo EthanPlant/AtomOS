@@ -1,4 +1,5 @@
 #include <stdint.h>
+
 #include <drivers/ports.h>
 
 uint8_t inb(uint16_t port)

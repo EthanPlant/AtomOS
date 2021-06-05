@@ -1,8 +1,9 @@
-#include <kernel/tty.h>
-#include <drivers/video/vga.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+
+#include <drivers/video/vga.h>
+#include <kernel/tty.h>
 
 tty_dev_t tty_dev;
 

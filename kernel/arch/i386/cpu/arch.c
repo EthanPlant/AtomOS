@@ -1,39 +1,22 @@
-#include <kernel/tty.h>
-#include <kernel/arch.h>
-#include <gdt.h>
-#include <idt.h>
-#include <isr.h>
-#include <drivers/video/vga.h>
 #include <stdio.h>
 #include <stdint.h>
+
+#include <cpu/gdt.h>
+#include <cpu/idt.h>
+#include <cpu/isr.h>
+
+#include <kernel/arch.h>
 #include <kernel/timer.h>
+#include <kernel/tty.h>
 #include <kernel/utils.h>
 
 int arch_init(void)
 {
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_writestring("Initializing GDT... ");
     init_gdt();
-    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    terminal_writestring("done\n");
-
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_writestring("Initializing IDT... ");
     init_idt();
-    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    terminal_writestring("done\n");
-
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_writestring("Installing ISRs... ");
     isr_install();
-    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    terminal_writestring("done\n");
-
-    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_writestring("Initializing timer... ");
     init_timer(TIMER_FREQ);
-    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-    terminal_writestring("done\n");
+
 
     return 0;
 }

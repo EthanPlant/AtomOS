@@ -1,7 +1,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <idt.h>
+#include <cpu/idt.h>
+#include <drivers/video/vga.h>
+#include <kernel/tty.h>
+
 
 extern void idt_flush(uint32_t);
 
@@ -18,12 +21,18 @@ void set_idt_gate(int n, uint32_t handler)
     idt_entries[n].flags = 0x8E;
 }
 
-void init_idt()
+void init_idt(void)
 {
+    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+    terminal_writestring("Initializing IDT... ");
+
     idt_ptr.limit = (sizeof(idt_entry_t) * IDT_ENTRIES) - 1;
     idt_ptr.base = (uint32_t) &idt_entries;
 
     memset(&idt_entries, 0, sizeof(idt_entry_t) * 256);
 
-    idt_flush((uint32_t*)&idt_ptr);
+    idt_flush((uint32_t)&idt_ptr);
+
+    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    terminal_writestring("done\n");
 }

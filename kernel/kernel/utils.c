@@ -1,9 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <kernel/utils.h>
-#include <kernel/tty.h>
 #include <kernel/arch.h>
+#include <kernel/timer.h>
+#include <kernel/tty.h>
+#include <kernel/utils.h>
 
 // Creates a formatted hex string with a certain amount of digits
 void hex_to_ascii(int n, int digits, char *str)
@@ -44,38 +45,51 @@ void reverse(char *str, int length)
 
 // Not technically part of the C standard so here for now instead of in libc
 // Converts an integer to a string
-char* itoa(int num, char *str, int base)
+char* itoa(int value, char* buffer, int base)
 {
+    // invalid input
+    if (base < 2 || base > 32) {
+        return buffer;
+    }
+ 
+    // consider the absolute value of the number
+    int n;
+    if (value < 0) n = -value;
+    else n = value;
+ 
     int i = 0;
-    bool isNegative = false;
-
-    if (num == 0)
+    while (n)
     {
-        str[i++] = '0';
-        str[i] = '\0';
-        return str;
+        int r = n % base;
+ 
+        if (r >= 10) {
+            buffer[i++] = 65 + (r - 10);
+        }
+        else {
+            buffer[i++] = 48 + r;
+        }
+ 
+        n = n / base;
     }
-
-    if (num < 0 && base == 10)
-    {
-        isNegative = true;
-        num = -num;
+ 
+    // if the number is 0
+    if (i == 0) {
+        buffer[i++] = '0';
     }
-
-    while (num != 0)
-    {
-        int rem = num % base;
-        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
-        num /= base;
+ 
+    // If the base is 10 and the value is negative, the resulting string
+    // is preceded with a minus sign (-)
+    // With any other base, value is always considered unsigned
+    if (value < 0 && base == 10) {
+        buffer[i++] = '-';
     }
+ 
+    buffer[i] = '\0'; // null terminate string
+ 
+    // reverse the string and return it
+    reverse(buffer, i);
 
-    if (isNegative)
-        str[i++] = '-';
-
-    str[i] = '\0';
-    reverse(str, i);
-
-    return str;
+    return buffer;
 }
 
 const char *witty_comments[] = 
@@ -111,7 +125,7 @@ const char *witty_comments[] =
 };
 
 // Kernel panic screen
-void panic(char *file, char *panic_msg, char *line)
+void panic(char *file, char *panic_msg, int line)
 {
     terminal_clear();
     terminal_setcolor(VGA_COLOR_BROWN, VGA_COLOR_BLACK);

@@ -1,7 +1,9 @@
+#include <stddef.h>
+#include <stdint.h>
+
 #include <drivers/video/vga.h>
 #include <drivers/ports.h>
-#include <stdint.h>
-#include <stddef.h>
+
 
 vga_info_t vga_info;
 

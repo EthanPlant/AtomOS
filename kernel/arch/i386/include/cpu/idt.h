@@ -24,6 +24,6 @@ struct idt_ptr_struct
 typedef struct idt_ptr_struct idt_ptr_t;
 
 void set_idt_gate(int n, uint32_t handler);
-void init_idt();
+void init_idt(void);
 
 #endif

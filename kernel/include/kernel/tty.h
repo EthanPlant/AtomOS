@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <drivers/video/vga.h>
 
 // TTY struct

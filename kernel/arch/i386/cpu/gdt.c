@@ -1,6 +1,8 @@
 #include <stdint.h>
 
-#include <gdt.h>
+#include <cpu/gdt.h>
+#include <drivers/video/vga.h>
+#include <kernel/tty.h>
 
 // Defined in assembly
 extern void gdt_flush(uint32_t);
@@ -22,6 +24,9 @@ void gdt_set_gate(int32_t num, uint32_t base, uint32_t limit, uint8_t access, ui
 
 void init_gdt(void)
 {
+    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+    terminal_writestring("Initializing GDT... ");
+
     gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
     gdt_ptr.base = (uint32_t)&gdt_entries;
 
@@ -32,4 +37,7 @@ void init_gdt(void)
     gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
 
     gdt_flush((uint32_t)&gdt_ptr);
+
+    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    terminal_writestring("done\n");
 }

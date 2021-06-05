@@ -1,9 +1,12 @@
-#include <isr.h>
-#include <idt.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <kernel/utils.h>
+
+#include <cpu/idt.h>
+#include <cpu/isr.h>
 #include <drivers/ports.h>
+#include <drivers/video/vga.h>
+#include <kernel/tty.h>
+#include <kernel/utils.h>
+
 
 isr_t interrupt_handlers[256];
 
@@ -64,6 +67,9 @@ void pagefault_handler(registers_t *regs)
 
 void isr_install(void)
 {
+    terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+    terminal_writestring("Installing ISRs and enabling interrupts... ");
+
     // Install the ISRs for the first 31 interrupts used by the CPU 
     set_idt_gate(0, (uint32_t)isr0);
     set_idt_gate(1, (uint32_t)isr1);
@@ -132,6 +138,9 @@ void isr_install(void)
     set_idt_gate(IRQ15, (uint32_t)irq15);
 
     asm volatile("sti");
+
+    terminal_setcolor(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    terminal_writestring("done\n");
 }
 
 void isr_handler(registers_t *regs)

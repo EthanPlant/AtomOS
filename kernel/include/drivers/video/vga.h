@@ -3,7 +3,6 @@
 
 // Simple VGA text mode driver
 
-
 #include <stdint.h>
 
 #define VIDEO_ADDR 0xB8000
