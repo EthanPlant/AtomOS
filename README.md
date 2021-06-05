@@ -41,7 +41,7 @@ I highly reccomend checking out the osdev wiki if you're new as much of the code
 - [ ] VESA 3.0 graphics
 
 ## System Features:
-- [x] Multiboot 2 compliant bootloader
+- [x] Multiboot compliant bootloader
 
 # Stuff coming in future updates
 - Code cleaning

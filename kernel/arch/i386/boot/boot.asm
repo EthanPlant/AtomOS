@@ -24,10 +24,9 @@ section .text
 global _start:function (_start.end - _start)
 _start:
     mov esp, stack_top
-
-    ; Call global constructors
-    extern _init
-    call _init
+    
+    push eax ; Push multiboot magic number
+    push ebx ; Push multiboot info
 
     ; Transfer control to kernel
     extern kernel_main

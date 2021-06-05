@@ -9,7 +9,6 @@
 // Creates a formatted hex string with a certain amount of digits
 void hex_to_ascii(int n, int digits, char *str)
 {
-    // str = "";
     int tmp;
     int index = 2;
     str[0] = '0';

@@ -36,11 +36,7 @@ drivers/video/vga.o \
 drivers/keyboard.o \
 
 OBJS=\
-$(ARCHDIR)/crti.o \
-$(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
-$(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
 
 LINK_LIST=\
 $(LDFLAGS) \
