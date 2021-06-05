@@ -1,8 +1,32 @@
-#include <limits.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <kernel/utils.h>
 #include <kernel/tty.h>
+#include <kernel/arch.h>
+
+// Creates a formatted hex string with a certain amount of digits
+void hex_to_ascii(int n, int digits, char *str)
+{
+    // str = "";
+    int tmp;
+    int index = 2;
+    str[0] = '0';
+    str[1] = 'x';
+
+    // Construct our string
+    for (int i = (4 * digits) - 4; i > 0; i -= 4)
+    {
+        tmp = (n >> i) & 0xF;
+        if (tmp > 0xA) str[index++] = tmp - 0xA + 'a';
+        else str[index++] = tmp + '0';
+    }
+    tmp = n & 0xF;
+    if (tmp > 0xA) str[index++] = tmp - 0xA + 'a';
+    else str[index++] = tmp + '0';
+    str[index] = '\0'; // Null-terminate our string
+} 
+
 
 void reverse(char *str, int length)
 {
@@ -121,7 +145,10 @@ void panic(char *file, char *panic_msg, char *line)
     itoa(get_ticks(), tick_str, 10);
     terminal_writestring(tick_str);
     terminal_writestring(" ticks.\n");
-    // TODO: Dump trace
+    terminal_newline();
+    terminal_writestring("    Context:\n");
+    terminal_writestring("    ");
+    print_registers();
     terminal_newline();
     terminal_newline();
     terminal_writestring("    System halted!\n");

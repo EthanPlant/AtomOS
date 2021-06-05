@@ -3,4 +3,6 @@
 
 int arch_init(void);
 
+void print_registers(void);
+
 #endif
