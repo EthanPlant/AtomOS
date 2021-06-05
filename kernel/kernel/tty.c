@@ -35,6 +35,10 @@ void terminal_putchar(char c)
         tty_dev.col = 0;
         ++tty_dev.row;
     }
+    else if (uc == 0x08)
+    {
+        vga_printchar(' ', tty_dev.col, tty_dev.row, tty_dev.color);
+    }
     else
     {
         vga_printchar(uc, tty_dev.col, tty_dev.row, tty_dev.color);
@@ -89,6 +93,21 @@ void terminal_writestring(const char *str)
 void terminal_newline(void)
 {
     terminal_putchar('\n');
+}
+
+void terminal_backspace(void)
+{
+    if (tty_dev.col == 0)
+    {
+        tty_dev.col = MAX_COLS - 1;
+        --tty_dev.row;
+    }
+    else
+    {
+        --tty_dev.col;
+    }
+
+    terminal_putchar(0x08);
 }
 
 // Set the terminal color
