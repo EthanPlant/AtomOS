@@ -44,7 +44,7 @@ void print_registers(void)
     asm volatile("movl %%esi, %%eax": "=a" (esi) : );
     asm volatile("movl %%edi, %%eax": "=a" (edi) : );
     asm volatile("movl %%esp, %%eax": "=a" (esp) : );
-    asm volatile("movl %%ebp, %%ebp": "=a" (ebp) : );
+    asm volatile("movl %%ebp, %%eax": "=a" (ebp) : );
     terminal_writestring("CS=");
     hex_to_ascii(cs, 4, str);
     terminal_writestring(str);
