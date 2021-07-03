@@ -30,6 +30,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
+kernel/memory/pmm.o \
 kernel/tty.o \
 kernel/utils.o \
 drivers/video/vga.o \

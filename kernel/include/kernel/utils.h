@@ -8,4 +8,6 @@ char *itoa(int value, char* buffer, int base);
 
 void panic(char* file, char *panic_msg, int line);
 
+#define assert(b) ((b) ? (void)0 : panic(__FILE__, "Assertion failed!", __LINE__))
+
 #endif

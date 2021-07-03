@@ -5,8 +5,9 @@
 #include <kernel/arch.h>
 #include <kernel/multiboot.h>
 #include <kernel/tty.h>
+#include <kernel/memory/pmm.h>
 
-#define VERSION_STR "June 5, 2021 Build\n"
+#define VERSION_STR "July 3, 2021 Build\n"
 
 void splash_screen(void)
 {
@@ -45,6 +46,7 @@ void kernel_main(multiboot_info_t *mbd, unsigned int magic)
     }
     else panic(__FILE__, "BOOT ERROR: No memory information!", __LINE__);
     arch_init();
+    pmm_init(mbd->mmap_addr, mbd->mmap_length, mbd->mem_upper);
     init_keyboard();
     terminal_setcolor(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
     terminal_writestring("All initialization complete!\n");
