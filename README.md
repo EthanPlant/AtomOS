@@ -32,7 +32,7 @@ I highly reccomend checking out the osdev wiki if you're new as much of the code
 - [ ] Preemptive kernel
 - [ ] Virtual filesystem
 - [ ] ELF exec driver
-- [ ] Memory management
+- [x] Memory management (WIP)
 - [ ] Ramdisk support
 - [ ] Moduling system
 
