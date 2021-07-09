@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#define VIDEO_ADDR 0xB8000
+#define VIDEO_ADDR 0xC00B8000
 #define MAX_ROWS 25
 #define MAX_COLS 80
 

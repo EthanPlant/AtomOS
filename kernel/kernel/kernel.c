@@ -7,7 +7,7 @@
 #include <kernel/tty.h>
 #include <kernel/memory/pmm.h>
 
-#define VERSION_STR "July 3, 2021 Build\n"
+#define VERSION_STR "July 9, 2021 Build\n"
 
 void splash_screen(void)
 {
