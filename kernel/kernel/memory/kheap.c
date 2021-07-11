@@ -4,7 +4,7 @@
 
 #include <kernel/memory/kheap.h>
 
-uint32_t placement_addr = 0x20000; // Should be determined at link time, for now 2 MiB should be safe to use
+uint32_t placement_addr = 0x00200000; // Should be determined at link time, for now 2 MiB should be safe to use
 
 // TODO proper kernel heap
 void *kmalloc_int(uint32_t size, bool align, uint32_t *phys)

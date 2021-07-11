@@ -30,6 +30,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
+kernel/memory/vmm.o \
 kernel/memory/pmm.o \
 kernel/memory/kheap.o \
 kernel/tty.o \
