@@ -9,6 +9,9 @@
 
 #define VERSION_STR "July 11, 2021 Build\n"
 
+extern uint32_t placement_addr;
+extern uint32_t end_phys;
+
 void splash_screen(void)
 {
     terminal_writestring("Welcome to\n");
@@ -24,6 +27,8 @@ void splash_screen(void)
 
 void kernel_main(multiboot_info_t *mbd, unsigned int magic)
 {
+    placement_addr = (uint32_t)&end_phys;
+
     init_vga();
     terminal_initialize();
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
@@ -53,6 +58,8 @@ void kernel_main(multiboot_info_t *mbd, unsigned int magic)
     terminal_writestring("All initialization complete!\n");
     terminal_newline();
     splash_screen();
+
+    pmm_alloc();
     
     while (1); // Need this here so we don't stop running
 }

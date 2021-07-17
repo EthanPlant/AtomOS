@@ -54,6 +54,8 @@ uint32_t vmm_get_phys(uint32_t virtual, page_directory_t *dir)
     page_t *page = _vmm_get_page(virtual, dir);
     uint32_t phys = page->frame * PAGE_SIZE;
     phys += (virtual & 0xFFF);
+
+    return phys;
 }
 
 // Set/clear a guard page
@@ -160,7 +162,10 @@ void init_mm(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_len, uint32_t upper_mem)
     _vmm_map(0, 0, kernel_dir, true, PAGE_RO);
     vmm_set_guard(0, kernel_dir);
 
-    used_frames = 0xC0200000; // Virtual address corresponding to our pmm bitmap, need to update this so we don't get page faults
+    uint32_t virtual_bitmap_addr = (uint32_t) used_frames + 0xC0000000;
+
+    used_frames = virtual_bitmap_addr; // Virtual address corresponding to our pmm bitmap, need to update this so we don't get page faults
+
 
     // Enable paging
     switch_page_directory(kernel_dir);

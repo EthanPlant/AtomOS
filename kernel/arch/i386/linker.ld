@@ -30,4 +30,6 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+
+	end_phys = . - 0xC0000000;
 }
