@@ -8,6 +8,7 @@
 #include <kernel/utils.h>
 #include <kernel/memory/kheap.h>
 #include <kernel/memory/pmm.h>
+#include <kernel/memory/vmm.h>
 #include <kernel/multiboot.h>
 
 uint32_t *used_frames;
@@ -26,7 +27,7 @@ extern uint32_t placement_addr;
 void pmm_set_frame(uint32_t phys_addr)
 {
     // Get the address's index in the bitmap
-    uint32_t frame_index = phys_addr / 0x1000;
+    uint32_t frame_index = phys_addr / PAGE_SIZE;
     uint32_t index = ARRAY_INDEX(frame_index);
     assert(index <= nframes / 32); // Ensure we're in bounds
     // Set the frame
@@ -38,7 +39,7 @@ void pmm_set_frame(uint32_t phys_addr)
 // Clear a frame in the used frames bitmap
 static void pmm_clear_frame(uint32_t phys_addr)
 {
-    uint32_t frame_index = phys_addr / 0x1000;
+    uint32_t frame_index = phys_addr / PAGE_SIZE;
     uint32_t index = ARRAY_INDEX(frame_index);
     assert(index <= nframes / 32);
     uint32_t offset = OFFSET_INTO_DWORD(frame_index);
@@ -49,7 +50,7 @@ static void pmm_clear_frame(uint32_t phys_addr)
 // Test if a bit in the bitmap is set
 static bool pmm_test_frame(uint32_t phys_addr)
 {
-    uint32_t frame_index = phys_addr / 0x1000;
+    uint32_t frame_index = phys_addr / PAGE_SIZE;
     uint32_t index = ARRAY_INDEX(frame_index);
     assert(index <= nframes / 32);
     uint32_t offset = OFFSET_INTO_DWORD(frame_index);
@@ -59,17 +60,17 @@ static bool pmm_test_frame(uint32_t phys_addr)
 // Return the first free frame at or before a given starting address
 static uint32_t pmm_first_free_frame(uint32_t start_addr)
 {
-    uint32_t index = start_addr / 0x1000 / 32;
-    if (index != 0) index = -1;
+    uint32_t index = start_addr / PAGE_SIZE / 32;
+    if (index != 0) index  -= 1;
 
-    for (; index < nframes; ++index)
+    for (; index < nframes / 32; ++index)
     {
-        if (used_frames[index] = 0xFFFFFFFF) continue; // No free frames, try the next index
+        if (used_frames[index] == 0xFFFFFFFF) continue; // No free frames, try the next index
 
         // If we're here, at least one bit among these 32 are 0, find the first
         for (uint32_t offset = 0; offset < 32; ++offset)
         {
-            if ((used_frames[index] & (1 << index)) != 0) return (index * 32 + offset) * 0x1000; // Found it, return the address of this frame
+            if ((used_frames[index] & (1 << offset)) == 0) return (index * 32 + offset) * PAGE_SIZE; // Found it, return the address of this frame
         }
     }
 
@@ -115,11 +116,11 @@ void pmm_init(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_length, uint32_t upper_m
             
             // Page align addresses
             uint32_t addr_lo = memmap->addr & 0xFFFFFFFF;
-            if (addr_lo < 0x1000) addr_lo = 0x1000; // Ignore the first page
+            if (addr_lo < PAGE_SIZE) addr_lo = PAGE_SIZE; // Ignore the first page
             if (addr_lo & 0xFFF)
             {
                 addr_lo &= 0xFFFFF000;
-                addr_lo += 0x1000;
+                addr_lo += PAGE_SIZE;
             }
 
             uint32_t addr_hi = addr_lo + (memmap->len & 0xFFFFFFFF);
@@ -129,12 +130,12 @@ void pmm_init(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_length, uint32_t upper_m
     }
 
     // The size of the bitmap is one bit per page
-    nframes = mem_end_page / 0x1000;
+    nframes = mem_end_page / PAGE_SIZE;
 
     // Allocate and initialize the bitmap
     used_frames = (uint32_t*)kmalloc((nframes / 32 + 1) * sizeof(uint32_t));
 
-    // Seet all frames to used, and clear the free areas below
+    // Set all frames to used, and clear the free areas below
     memset(used_frames, 0xFF, (nframes / 32 + 1) * sizeof(uint32_t));
 
     last_allocated_frame = 0xFFFFFFFF;
@@ -187,16 +188,16 @@ void pmm_init(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_length, uint32_t upper_m
 
             // Page align adresses
             uint32_t addr_lo = memmap->addr & 0xFFFFFFFF;
-            if (addr_lo < 0x1000) addr_lo = 0x1000;
+            if (addr_lo < PAGE_SIZE) addr_lo = PAGE_SIZE;
             if (addr_lo & 0xFFF) 
             {
                 addr_lo &= 0xFFFFF000;
-                addr_lo += 0x1000;
+                addr_lo += PAGE_SIZE;
             }
 
             uint32_t addr_hi = addr_lo + (memmap->len & 0xFFFFFFFF);
 
-            if (memmap->addr & 0xFFFFFFFF < 0x1000) addr_hi -= 0x1000;
+            if (memmap->addr & 0xFFFFFFFF < PAGE_SIZE) addr_hi -= PAGE_SIZE;
 
             if (addr_hi & 0xFFF) addr_hi &= 0xFFFFF000;
 
@@ -208,7 +209,7 @@ void pmm_init(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_length, uint32_t upper_m
 
 
             // Clear the addresses in this area
-            for (uint32_t addr = addr_lo; addr < addr_hi; addr += 0x1000)
+            for (uint32_t addr = addr_lo; addr < addr_hi; addr += PAGE_SIZE)
             {
                 assert(addr < (memmap->addr & 0xFFFFFFFF) + (memmap->len & 0xFFFFFFFF));
                 pmm_clear_frame(addr);
@@ -253,15 +254,15 @@ uint32_t pmm_alloc_continuous(uint32_t num_frames)
     while (!success)
     {
         success = true; // If set when the for loop finishes, we're done
-        if (start + (num_frames - 1) * 0x1000 > mem_end_page) panic(__FILE__, "ERROR: No large enough memory region found!", __LINE__);
+        if (start + (num_frames - 1) * PAGE_SIZE > mem_end_page) panic(__FILE__, "ERROR: No large enough memory region found!", __LINE__);
 
         // We know start is free, so start looking at start + 1
         for (uint32_t i = 1; i < num_frames; ++i)
         {
-            if (pmm_test_frame(start + (i * 0x1000)) != 0)
+            if (pmm_test_frame(start + (i * PAGE_SIZE)) != 0)
             {
                 // We found a non-free frame, move on to the next possible block
-                start = start + ((i + 1) * 0x1000);
+                start = start + ((i + 1) * PAGE_SIZE);
                 success = false;
                 break;
             }
@@ -270,7 +271,7 @@ uint32_t pmm_alloc_continuous(uint32_t num_frames)
 
     // If we're here, there's a block available starting at start
     for (uint32_t i = 0; i < num_frames; ++i)
-        pmm_set_frame(start + i * 0x1000);
+        pmm_set_frame(start + i * PAGE_SIZE);
 
     return start; // Return the starting address of the block
 }
@@ -292,7 +293,7 @@ uint32_t pmm_bytes_free(void)
         if (used_frames[i] == 0)
         {
             // All 32 frames in this bitmap chunk are free
-            unused += 0x1000 * 32;
+            unused += PAGE_SIZE * 32;
             continue;
         }
         else if (used_frames[i] == 0xFFFFFFFF) continue; // No free frames

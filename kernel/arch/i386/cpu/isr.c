@@ -62,7 +62,20 @@ void gpfault_handler(registers_t *regs)
 
 void pagefault_handler(registers_t *regs)
 {
-    panic(__FILE__, "CPU ERROR: Page Fault detected!", __LINE__);
+    //panic(__FILE__, "CPU ERROR: Page Fault detected!", __LINE__);
+    terminal_writestring("Page Fault (");
+    uint32_t faulting_addr;
+    asm volatile("movl %%cr2, %0" : "=r" (faulting_addr));
+    char *error_str = "";
+    char *addr_str = "";
+
+    hex_to_ascii(regs->err_code, 8, error_str);
+    terminal_writestring(error_str);
+    terminal_writestring(") at ");
+    hex_to_ascii(faulting_addr, 8, addr_str);
+    terminal_writestring(addr_str);
+
+    while(1);
 }
 
 void isr_install(void)

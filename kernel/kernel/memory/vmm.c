@@ -7,6 +7,7 @@
 #include <kernel/memory/pmm.h>
 #include <kernel/memory/vmm.h>
 #include <kernel/utils.h>
+#include <kernel/tty.h>
 
 // The kernel's page directory
 page_directory_t *kernel_dir = 0;
@@ -21,6 +22,9 @@ static void _vmm_create_page_table(uint32_t, page_directory_t*);
 
 // Defined in kheap.c
 extern uint32_t placement_addr;
+
+// pmm.c
+extern uint32_t *used_frames;
 
 // Map a virtual address to a physical one, in kernel space
 void vmm_map_kernel(uint32_t virtual, uint32_t physical, bool write)
@@ -155,6 +159,8 @@ void init_mm(uint32_t mbd_mmap_addr, uint32_t mbd_mmap_len, uint32_t upper_mem)
     // Set address 0 as a guard page to catch NULL pointer dereferences
     _vmm_map(0, 0, kernel_dir, true, PAGE_RO);
     vmm_set_guard(0, kernel_dir);
+
+    used_frames = 0xC0200000; // Virtual address corresponding to our pmm bitmap, need to update this so we don't get page faults
 
     // Enable paging
     switch_page_directory(kernel_dir);
